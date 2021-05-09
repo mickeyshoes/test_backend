@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import User
 
+#model input test
 class UserModelTest(TestCase):
 
     def test_create_user(self):

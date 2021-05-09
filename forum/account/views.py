@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 
+#register user
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_user(request):
@@ -30,6 +31,7 @@ def create_user(request):
 
         return Response(response, status=status.HTTP_201_CREATED)
 
+#login user
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
