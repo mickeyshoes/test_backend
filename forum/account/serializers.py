@@ -7,6 +7,7 @@ class CreateAndModifyUserSerializer(serializers.Serializer):
     email = serializers.CharField(required=True, max_length=100)
     password = serializers.CharField(required=True)
 
+    #최초 생성 시 값 검증
     def create(self, validated_data):
         user = User.objects.create(
             login_id = validated_data['login_id'],
