@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from. import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register('', views.Index, basename='questions')
 
 urlpatterns = [
-    path('', views.Index.as_view()),
+    path('', include(router.urls)),
     path('<int:pk>', views.Question_detail.as_view()),
 ]

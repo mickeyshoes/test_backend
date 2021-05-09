@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
             raise ValueError('User must have an own email')
 
         if not password:
-            raise ValueError('USer must have an own password')
+            raise ValueError('User must have an own password')
 
         user = self.model(
             login_id = login_id,

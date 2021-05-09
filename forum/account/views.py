@@ -26,9 +26,9 @@ def create_user(request):
         if User.objects.filter(email=serializer.validated_data['email']).first() is not None:
             return Response({'message' : 'email already exists'}, status=status.HTTP_412_PRECONDITION_FAILED)
 
-        serializer.save()
-        print(serializer.data)
-        return Response({'message' : "success"}, status=status.HTTP_201_CREATED)
+        response = refresh_token(serializer.save()) # save 할 때 deserialized 된 객체를 반환함
+
+        return Response(response, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -48,7 +48,12 @@ def login(request):
         except KeyError:
             return Response({'message' : 'there is no matching data', 'login_id' : 'required', 'password' : 'required'}, status=status.HTTP_400_BAD_REQUEST)
  
+
+ 
 def refresh_token(user) -> dict:
+    '''
+    토큰 발급
+    '''
     refresh = RefreshToken.for_user(user)
     response = {
         'message' : 'success',

@@ -3,27 +3,24 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, viewsets
 from .models import Question, Comment, LikeQuestion
-from .serializers import QuestionSerializer , TreatQuestionSerializer
-
+from .serializers import QuestionSerializer , TreatQuestionSerializer, CommentSerializer
+from account.models import User
 # Create your views here.
 
-class Index(APIView):
+class Index(viewsets.ModelViewSet):
 
-    def get(self, request):
-        permission_classes = [AllowAny]
-        queryset = Question.objects.all()
-        serializer = TreatQuestionSerializer(queryset, many=True)
-        print(request.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Question.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = TreatQuestionSerializer
 
     def post(self, request):
         permission_classes = [IsAuthenticated]
-        serializer = TreatQuestionSerializer(data = request.data)
-        print(request.user) # jwt 토근에서 가져온 값
-        if serializer.is_valid():
-            serializer.save()
+        user = User.objects.get(login_id=request.user) # jwt 토근에서 가져온 값
+        serializer = TreatQuestionSerializer(data=request.data, writer=user)
+        if serializer.is_valid(raise_exception=True): # 여기서 null constraint 제약 조건이 걸려서 에러가 나는것 같음 -> 사용자 객체를 미리 넣어줄 수는 없나?
+            serializer.save(writer=user)
             return Response({'message' : 'success'}, status=status.HTTP_201_CREATED)
         
         else:
@@ -56,3 +53,9 @@ class Question_detail(APIView):
         '''
         # question.delete()
         return Response({'message' : 'success'}, status=status.HTTP_204_NO_CONTENT)
+
+class CommentView(APIView):
+
+    def post(self, request):
+        permission_classes = [IsAuthenticated]
+        serializer = CommentSerializer
