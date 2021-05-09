@@ -13,7 +13,16 @@ class Question(models.Model):
         on_delete=models.CASCADE
     )
 
-    question = models.TextField()
+    title = models.CharField(
+        max_length = 150,
+        null=False,
+        blank=False
+    )
+
+    question = models.TextField(
+        null=False,
+        blank=False
+    )
 
     created_time = models.DateTimeField(auto_now_add=True) # 질문 작성 시간 자동기록
 
@@ -25,11 +34,15 @@ class Question(models.Model):
         related_name='likes' # 역참조시 이름을 정하지 않을 경우 makemigrations 에서 SystemCheckError 발생
     )
 
+    def __str__(self):
+        return self.id
+
     class Meta:
         db_table = 'forum_question'
         ordering = ['created_time']
         verbose_name = 'question'
         verbose_name_plural = 'question_list'
+
 
 
 class Comment(models.Model):

@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.http import Http404
 
 # Create your models here.
 
@@ -34,14 +35,24 @@ class UserManager(BaseUserManager):
         )
 
         user.is_admin = True
+        user.is_staff = True
         user.save()
         return user
 
-class User(AbstractBaseUser):
+    def get_object_or_404(self, login_id):
+        try:
+            user = User.objects.get(login_id=login_id)
+            return user
+
+        except User.DoesNotExist:
+            raise Http404("No User matches the given query")
+
+class User(AbstractBaseUser, PermissionsMixin):
 
     login_id = models.CharField(
         max_length = 50,
-        unique = True
+        unique = True,
+        verbose_name = 'login_id'
     )
 
     email = models.EmailField(
@@ -50,8 +61,12 @@ class User(AbstractBaseUser):
     )
 
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
+
+    USERNAME_FIELD = 'login_id'
+    REQUIRED_FIELD = ['email']
 
     class Meta:
         verbose_name = 'user'

@@ -43,6 +43,29 @@ INSTALLED_APPS = [
     'questions',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES' : (
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # default authentication : json web token authentication
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer' # json response
+    ]
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=59), # 토큰 유효 시간
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=1), # refresh 토큰 유효 시간
+    'SIGNING_KEY' : secrets.SECRET_KEY, # 암호화에 사용할 키
+    'ALGORITHM' : 'HS256', # 암호화 방식
+}
+
+AUTH_USER_MODEL = 'account.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
